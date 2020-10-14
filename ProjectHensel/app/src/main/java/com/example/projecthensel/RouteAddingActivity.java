@@ -56,15 +56,15 @@ public class RouteAddingActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(RouteAddingActivity.this, MainActivity.class);
-                        intent.putExtra("bool", "1");
+                        intent.putExtra("bool", 1);
                         intent.putExtra("month", monthEdit.getText().toString());
                         intent.putExtra("date", dateEdit.getText().toString());
                         intent.putExtra("count", (count + 1));
                         startActivity(intent);
-                        finish();
 
                         monthEdit.setText("");
                         dateEdit.setText("");
+                        finish();
                     }
                 });
                 builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {

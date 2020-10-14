@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ImageButton ImageButton;
     DateAdapter adapter;
+    Intent intent = getIntent();
+    String month;
+    String date;
+    int count, bool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
         ImageButton = (ImageButton)findViewById(R.id.editImageButton);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
 
-        Intent intent = getIntent();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if(intent.getExtras().getString("bool").equals("1")){
-            String month = intent.getExtras().getString("month");
-            String date = intent.getExtras().getString("date");
-            int count = intent.getExtras().getInt("count");
+        bool = intent.getExtras().getInt("bool");
+        if(bool == 1){
+            month = intent.getExtras().getString("month");
+            date = intent.getExtras().getString("date");
+            count = intent.getExtras().getInt("count");
             adapter.addItem(new Data(month + "월 " + date + "일", count));
             recyclerView.setAdapter(adapter);
         }
