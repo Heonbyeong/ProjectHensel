@@ -1,5 +1,6 @@
-package com.example.projecthensel;
+    package com.example.projecthensel;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,66 +12,66 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder>
-                            implements OnDataItemClickListener {
-
-    private ArrayList<Data> Data = new ArrayList<Data>();
+                            implements OnDataItemClickListener{
+    ArrayList<Data> items = new ArrayList<>();
     OnDataItemClickListener listener;
 
-    public void addItem(Data data){
-        Data.add(data);
-    }
+    public void addItem(Data item) {items.add(item);}
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemView = inflater.inflate(R.layout.recyclerview, viewGroup, false);
-        return new ViewHolder(itemView, this);
+    public DateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View itemView = inflater.inflate(R.layout.recyclerview, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewholder, int position) {
-        Data item = Data.get(position);
-        viewholder.setItem(item);
+    public void onBindViewHolder(@NonNull DateAdapter.ViewHolder holder, int position) {
+        Data item = items.get(position);
+        holder.setItem(item);
     }
 
     @Override
     public int getItemCount() {
-        return Data.size();
+        return items.size();
     }
 
     @Override
-    public void onItemClick(ViewHolder holder, View view, int position) {
-        if (listener != null) {
-            listener.onItemClick(holder, view, position);
+    public void onItemClick(DateAdapter.ViewHolder holder, View view, int position) {
+        if(listener != null){
+            listener.onItemClick(holder,view,position);
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView dateTextView;
-        private TextView countTextView;
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        TextView dateText, count;
 
-        public ViewHolder(@NonNull View itemView, final  OnDataItemClickListener listener) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
 
-            dateTextView = itemView.findViewById(R.id.dateText);
-            countTextView = itemView.findViewById(R.id.countText);
+            dateText = itemView.findViewById(R.id.dateText);
+            count = itemView.findViewById(R.id.countText);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener(){
+
                 @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
                     int position = getAdapterPosition();
 
-                    if (listener != null) {
-                        listener.onItemClick(ViewHolder.this, view, position);
+                    if(position != RecyclerView.NO_POSITION){
+                        Data item = items.get(position);
+                        Intent intent = new Intent(v.getContext(), DetailRouteActivity.class);
+                        v.getContext().startActivity(intent);
                     }
                 }
             });
+
         }
 
-        public void setItem(Data item) {
-            dateTextView.setText(item.getData());
-            countTextView.setText(item.getCount());
+        public void setItem(Data item){
+            dateText.setText(item.getData());
+            count.setText(Integer.toString(item.getCount()));
         }
     }
 }
