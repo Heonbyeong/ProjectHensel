@@ -53,11 +53,8 @@ public class DetailRouteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(DetailRouteActivity.this, MainActivity.class);
-                //intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent2);
-//                intent2.setAction(Intent.ACTION_MAIN);
-//                intent2.addCategory(Intent.CATEGORY_LAUNCHER);
-//                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             }
         });
     }

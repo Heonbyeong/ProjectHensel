@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 public class RouteAddingActivity extends AppCompatActivity {
 
@@ -33,15 +34,16 @@ public class RouteAddingActivity extends AppCompatActivity {
     TextView countText;
     EditText addressEdit, yearEdit, monthEdit, dateEdit, hourStartEdit, minStartEdit, hourEndEdit, minEndEdit, memoEdit;
     WebView daum_webView;
-    String year, month, date, memo,address, startHour, startMin, endHour, endMin;
+    String year, month, date, dataString, memo,address, startTime, endTime;
     InputMethodManager imm;
     ConstraintLayout mainLayout;
     int count = 0;
+//    final AppDatabase db = Room.databaseBuilder(this, AppDatabase.class, "dateInfo-db").build(); // 데이터베이스 객체 생성
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.route_adding_page);
-        final int code2 = 1002;
         returnButton = (Button) findViewById(R.id.addToAllButton);
         addButton = (Button) findViewById(R.id.addButton);
         searchButton = (Button) findViewById(R.id.searchButton);
@@ -56,30 +58,10 @@ public class RouteAddingActivity extends AppCompatActivity {
         minEndEdit = (EditText)findViewById(R.id.minEndEdit);
         memoEdit = (EditText)findViewById(R.id.memoEdit);
         mainLayout = (ConstraintLayout)findViewById(R.id.constraint);
-        //기본 SharedPreferences 환경과 관련된 객체 얻기
-        //pref = PreferenceManager.getDefaultSharedPreferences(this);
-        //editor = pref.edit();
 
-        //추가 하기전 다시 알리는 객체
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);   //추가 하기전 다시 알리는 객체
 
-        //배경을 누를시 키보드가 내려가게 하는 코드
-        mainLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(addressEdit.getWindowToken(), 0);
-            }
-        });
-        //index 페이지로 돌아가는 코드
-        returnButton.setOnClickListener(new View.OnClickListener() { // All Route 페이지로 이동하는 인텐트
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivityForResult(intent, code2);
-            }
-        });
-        //EditText에 입력하고 추가하기 위한 코드
+        //EditText에 담긴 내용을 추가하고 전달하기 위한 코드
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,20 +77,11 @@ public class RouteAddingActivity extends AppCompatActivity {
                             toast.show();
                         }
                         else {
-                            year = yearEdit.getText().toString();
-                            month = monthEdit.getText().toString();
-                            date = dateEdit.getText().toString();
-                            address = addressEdit.getText().toString();
-                            startHour = hourStartEdit.getText().toString();
-                            startMin = minStartEdit.getText().toString();
-                            endHour = hourEndEdit.getText().toString();
-                            endMin = minEndEdit.getText().toString();
-                            memo = memoEdit.getText().toString();
-                            count += 1;
-
                             Intent intent = new Intent(RouteAddingActivity.this, MainActivity.class);
+                            getEdit();
                             insertData(intent);
-                            //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            //db.RoomDao().insert(new RoomEntity(year, month, date, dataString, memo, address, startTime, endTime));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
 
                             initData();
@@ -127,28 +100,47 @@ public class RouteAddingActivity extends AppCompatActivity {
             }
         });
 
+        //주소 검색 API
         searchButton.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
 
             }
         });
+
+        //배경 클릭시 키보드가 내려가게 하는 코드
+        mainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(addressEdit.getWindowToken(), 0);
+            }
+        });
+        //index 페이지로 돌아가는 코드
+        returnButton.setOnClickListener(new View.OnClickListener() { // All Route 페이지로 이동하는 인텐트
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+            }
+        });
     }
+    //데이터를 Main 페이지로 전달
     public void insertData(Intent intent){
-        intent.putExtra("bool", "1");
+        intent.putExtra("bool", true);
         intent.putExtra("year", year);
         intent.putExtra("month", month);
         intent.putExtra("date", date);
+        intent.putExtra("dataString", dataString);
         intent.putExtra("address", address);
-        intent.putExtra("startHour", startHour);
-        intent.putExtra("startMin", startMin);
-        intent.putExtra("endHour", endHour);
-        intent.putExtra("endMin", endMin);
+        intent.putExtra("startTime", startTime);
+        intent.putExtra("endTime", endTime);
         intent.putExtra("memo", memo);
         intent.putExtra("count", count);
     }
 
+    //EditText 초기화
     public void initData(){
         yearEdit.setText("");
         monthEdit.setText("");
@@ -161,4 +153,16 @@ public class RouteAddingActivity extends AppCompatActivity {
         addressEdit.setText("");
     }
 
+    //EditText에 담긴 문자열을 변수에 저장
+    public void getEdit(){
+        year = yearEdit.getText().toString();
+        month = monthEdit.getText().toString();
+        date = dateEdit.getText().toString();
+        address = addressEdit.getText().toString();
+        startTime = hourStartEdit.getText().toString() + ":" + minStartEdit.getText().toString();
+        endTime = hourEndEdit.getText().toString() + ":" + minEndEdit.getText().toString();
+        memo = memoEdit.getText().toString();
+        dataString = month + "월 " + date + "일";
+        count += 1;
+    }
 }

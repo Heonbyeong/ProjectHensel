@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,15 +28,15 @@ public class MainActivity extends AppCompatActivity {
     ImageButton ImageButton;
     DateAdapter adapter = new DateAdapter();
     Toast toast2;
-    String year, month, date, bool, dataString; // Adding 페이지에서 받아오는 값을 저장
+    String year, month, date, dataString; // Adding 페이지에서 받아오는 값을 저장
     String memo,address, startTime, endTime; // Detail 페이지로 넘길 값을 저장
+    Boolean bool;
     private long backKeyPressedTime = 0; // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
     int count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final int code = 1001; //add Route 수신코드
         ImageButton = findViewById(R.id.editImageButton);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -45,31 +47,13 @@ public class MainActivity extends AppCompatActivity {
         if(intent.hasExtra("bool"))
        {
            //add Route 페이지에서 데이터 받아오기
-           bool = intent.getExtras().getString("bool");
-           year = intent.getExtras().getString("year");
-           month = intent.getExtras().getString("month");
-           date = intent.getExtras().getString("date");
-           count = intent.getExtras().getInt("count");
-           address = intent.getExtras().getString("address");
-           startTime = intent.getExtras().getString("startHour") + ":" + intent.getExtras().getString("startMin") + " AM";
-           endTime = intent.getExtras().getString("endHour") + ":" + intent.getExtras().getString("endMin") + " PM";
-           memo = intent.getExtras().getString("memo");
-           dataString = month + "월 " + date + "일";
+           getData(intent);
 
            //Main -> Detail 페이지로 데이터 전달
-           intent3.putExtra("hasData", "yes");
-           intent3.putExtra("yearToDetail", year);
-           intent3.putExtra("dataStringToDetail", dataString);
-           intent3.putExtra("countToDetail", count);
-           intent3.putExtra("addressToDetail", address);
-           intent3.putExtra("startTimeToDetail", startTime);
-           intent3.putExtra("endTimeToDetail", endTime);
-           intent3.putExtra("memoToDetail", memo);
+           insertData(intent3);
 
+           intent3.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
            startActivity(intent3);
-//           intent3.setAction(Intent.ACTION_MAIN);
-//           intent3.addCategory(Intent.CATEGORY_LAUNCHER);
-//           intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
            adapter.addItem(new Data(dataString, count));
 
         }
@@ -78,12 +62,10 @@ public class MainActivity extends AppCompatActivity {
             ImageButton.setOnClickListener(new View.OnClickListener(){     //add Route 페이지로 이동
             @Override
             public void onClick(View v) {
-                //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 Intent intent2 = new Intent(MainActivity.this, RouteAddingActivity.class);
-                startActivityForResult(intent2, code);
-//                intent2.setAction(Intent.ACTION_MAIN);
-//                intent2.addCategory(Intent.CATEGORY_LAUNCHER);
-//                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent2);
+                finish();
             }
         });
 
@@ -101,8 +83,32 @@ public class MainActivity extends AppCompatActivity {
         }
         //마지막으로 뒤로 가기 버튼을 눌렀던 시간에 2.5초를 더해 비교 후 2.5초가 지나지 않았으면 종료
         if(System.currentTimeMillis() <= backKeyPressedTime + 2500){
-            finish();
+            finishAffinity();
         }
         
+    }
+
+    public void getData(Intent intent){
+        bool = intent.getExtras().getBoolean("bool");
+        year = intent.getExtras().getString("year");
+        month = intent.getExtras().getString("month");
+        date = intent.getExtras().getString("date");
+        count = intent.getExtras().getInt("count");
+        address = intent.getExtras().getString("address");
+        startTime = intent.getExtras().getString("startTime");
+        endTime = intent.getExtras().getString("endTime");
+        memo = intent.getExtras().getString("memo");
+        dataString = intent.getExtras().getString("dataString");
+    }
+
+    public void insertData(Intent intent3){
+        intent3.putExtra("hasData", "yes");
+        intent3.putExtra("yearToDetail", year);
+        intent3.putExtra("dataStringToDetail", dataString);
+        intent3.putExtra("countToDetail", count);
+        intent3.putExtra("addressToDetail", address);
+        intent3.putExtra("startTimeToDetail", startTime);
+        intent3.putExtra("endTimeToDetail", endTime);
+        intent3.putExtra("memoToDetail", memo);
     }
 }
