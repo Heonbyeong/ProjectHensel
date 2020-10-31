@@ -38,7 +38,6 @@ public class RouteAddingActivity extends AppCompatActivity {
     InputMethodManager imm;
     ConstraintLayout mainLayout;
     int count = 0;
-//    final AppDatabase db = Room.databaseBuilder(this, AppDatabase.class, "dateInfo-db").build(); // 데이터베이스 객체 생성
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +79,6 @@ public class RouteAddingActivity extends AppCompatActivity {
                             Intent intent = new Intent(RouteAddingActivity.this, MainActivity.class);
                             getEdit();
                             insertData(intent);
-                            //db.RoomDao().insert(new RoomEntity(year, month, date, dataString, memo, address, startTime, endTime));
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
 

@@ -33,6 +33,7 @@ public class DetailRouteActivity extends AppCompatActivity {
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Intent intent4 = getIntent();
 
+        //메인액티비티에서 데이터 가져오기
         if(intent4.hasExtra("hasData")){
             year = intent4.getExtras().getString("yearToDetail") + "년";
             dateString = intent4.getExtras().getString("dataStringToDetail");
@@ -49,6 +50,8 @@ public class DetailRouteActivity extends AppCompatActivity {
             detailRecyclerView.setAdapter(adapter);
             adapter.addItem(new Data2(address, startTime, endTime, memo));
         }
+
+        //메인으로 돌아가기
         returnButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -57,5 +60,10 @@ public class DetailRouteActivity extends AppCompatActivity {
                 startActivity(intent2);
             }
         });
+
+    }
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 }

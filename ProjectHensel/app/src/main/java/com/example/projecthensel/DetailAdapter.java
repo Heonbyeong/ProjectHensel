@@ -33,7 +33,6 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
-
             addressText = itemView.findViewById(R.id.textView4);
             startTime = itemView.findViewById(R.id.startTime);
             endTime = itemView.findViewById(R.id.endTime);
@@ -41,14 +40,13 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
             delButton = itemView.findViewById(R.id.delButton);
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
-            final AlertDialog dialog = builder.create();
 
+            //경로 삭제버튼 클릭시 띄우는 팝업창
             delButton.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     builder.setTitle("정말 삭제하시겠습니까?").setMessage("선택하신 기록이 삭제됩니다.");
                     builder.setCancelable(false);
-//                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
                     builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -61,7 +59,10 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
                             dialog.cancel();
                         }
                     });
+                    AlertDialog dialog = builder.create();
                     dialog.show();
+
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
                 }
             });
         }
@@ -75,13 +76,10 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
 
         public void removeItem(int position){
             items.remove(position);
+
             notifyItemRemoved(position);
         }
     }
-
-//    DetailAdapter(ArrayList<Data2> list){
-//        items = list;
-//    }
 
     @NonNull
     @Override
