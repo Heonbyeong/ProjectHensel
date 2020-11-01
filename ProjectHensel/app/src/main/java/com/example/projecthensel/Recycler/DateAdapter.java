@@ -19,14 +19,13 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder>
                             implements OnDataItemClickListener {
     ArrayList<Data> items = new ArrayList<>();
     OnDataItemClickListener listener;
-
     public void addItem(Data item) {items.add(item);}
-
     @NonNull
     @Override
     public DateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.recyclerview, parent, false);
+
         return new ViewHolder(itemView);
     }
 
@@ -56,7 +55,6 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder>
 
             dateText = itemView.findViewById(R.id.dateText);
             count = itemView.findViewById(R.id.countText);
-
             itemView.setOnClickListener(new View.OnClickListener(){
 
                 @Override

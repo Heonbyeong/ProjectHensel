@@ -40,8 +40,8 @@ public class DetailRouteActivity extends AppCompatActivity {
             year = intent4.getExtras().getString("yearToDetail") + "년";
             dateString = intent4.getExtras().getString("dataStringToDetail");
             address = intent4.getExtras().getString("addressToDetail");
-            startTime = intent4.getExtras().getString("startTimeToDetail");
-            endTime = intent4.getExtras().getString("endTimeToDetail");
+            startTime = intent4.getExtras().getString("startTimeToDetail") + " AM";
+            endTime = intent4.getExtras().getString("endTimeToDetail") + " PM";
             memo = intent4.getExtras().getString("memoToDetail");
             count = intent4.getExtras().getString("countToDetail");
 
@@ -58,7 +58,7 @@ public class DetailRouteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(DetailRouteActivity.this, MainActivity.class);
-                intent2.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent2);
             }
         });

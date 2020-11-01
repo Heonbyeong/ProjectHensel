@@ -1,11 +1,13 @@
 package com.example.projecthensel;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private long backKeyPressedTime = 0; // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
     private List<Date> dateList;
     int count;
+    Parcelable recyclerViewState = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +41,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
         final Intent intent = getIntent();
         Intent intent3 = new Intent(getApplicationContext(), DetailRouteActivity.class);
+        if(recyclerViewState != null)
+            recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
 
         if(intent.hasExtra("bool"))
        {
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
            //Main -> Detail 페이지로 데이터 전달
            insertData(intent3);
 
-           intent3.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+           intent3.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
            startActivity(intent3);
         }
 
@@ -58,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(MainActivity.this, RouteAddingActivity.class);
-                intent2.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent2);
-                finish();
+//                finish();
             }
         });
     }
