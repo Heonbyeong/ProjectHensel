@@ -1,20 +1,32 @@
 package com.example.projecthensel;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.text.Layout;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +40,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.example.projecthensel.Room.AppDatabase;
+
 public class RouteAddingActivity extends AppCompatActivity {
 
     Button returnButton, addButton, searchButton;
@@ -37,7 +51,11 @@ public class RouteAddingActivity extends AppCompatActivity {
     String year, month, date, dataString, memo,address, startTime, endTime;
     InputMethodManager imm;
     ConstraintLayout mainLayout;
+    private Handler handler;
+    private AppDatabase db;
+
     int count = 0;
+    int id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,10 +96,9 @@ public class RouteAddingActivity extends AppCompatActivity {
                         else {
                             Intent intent = new Intent(RouteAddingActivity.this, MainActivity.class);
                             getEdit();
+                            //db.dateDao().update(year, month, date, dataString, memo, address, startTime, endTime, id);
                             insertData(intent);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
-
                             initData();
                             finish();
                         }
@@ -102,7 +119,32 @@ public class RouteAddingActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                init_webView();
 
+                daum_webView.setWebChromeClient(new WebChromeClient(){
+                    @SuppressLint("SetJavaScriptEnabled")
+                    @Override
+                    public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg){
+                        WebView newWebView = new WebView(getApplicationContext());
+                        WebSettings webSettings = newWebView.getSettings();
+                        webSettings.setJavaScriptEnabled(true);
+                        final Dialog dialog = new Dialog(getApplicationContext());
+                        dialog.setContentView(newWebView);
+                        dialog.show();
+                        newWebView.setWebChromeClient(new WebChromeClient(){
+                            @Override
+                            public void onCloseWindow(WebView window){
+                                dialog.dismiss();
+                            }
+                        });
+                        ((WebView.WebViewTransport)resultMsg.obj).setWebView(newWebView);
+                        resultMsg.sendToTarget();
+
+                        return true;
+                    }
+                });
+
+                handler = new Handler();
             }
         });
 
@@ -118,12 +160,37 @@ public class RouteAddingActivity extends AppCompatActivity {
         returnButton.setOnClickListener(new View.OnClickListener() { // All Route 페이지로 이동하는 인텐트
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                Intent intent = new Intent(RouteAddingActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
+
+    @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
+    public void init_webView(){
+        daum_webView = findViewById(R.id.daum_webView);
+        daum_webView.getSettings().setJavaScriptEnabled(true);
+        daum_webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        daum_webView.addJavascriptInterface(new AndroidBridge(), "kakaoAPI");
+        //daum_webView.setWebChromeClient(chromeClient);
+        daum_webView.loadUrl("file:///android_asset/test_doc.html");
+    }
+
+    private class AndroidBridge{
+        @JavascriptInterface
+        public void setAddress(final  String arg1, final  String arg2, final  String arg3){
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    addressEdit.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
+
+                    init_webView();
+                }
+            });
+        }
+    }
+
     //데이터를 Main 페이지로 전달
     public void insertData(Intent intent){
         intent.putExtra("bool", true);
@@ -164,3 +231,6 @@ public class RouteAddingActivity extends AppCompatActivity {
         count += 1;
     }
 }
+
+
+

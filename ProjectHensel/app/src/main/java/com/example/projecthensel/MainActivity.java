@@ -1,26 +1,22 @@
 package com.example.projecthensel;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.projecthensel.Recycler.Data;
+import com.example.projecthensel.Recycler.DateAdapter;
+import com.example.projecthensel.Room.AppDatabase;
+import com.example.projecthensel.Room.Date;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     String memo,address, startTime, endTime; // Detail 페이지로 넘길 값을 저장
     Boolean bool;
     private long backKeyPressedTime = 0; // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
+    private List<Date> dateList;
     int count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +45,12 @@ public class MainActivity extends AppCompatActivity {
        {
            //add Route 페이지에서 데이터 받아오기
            getData(intent);
-
+           adapter.addItem(new Data(dataString, count));
            //Main -> Detail 페이지로 데이터 전달
            insertData(intent3);
 
            intent3.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
            startActivity(intent3);
-           adapter.addItem(new Data(dataString, count));
-
         }
 
         //이미지 버튼 클릭시 Add 페이지로 이동
@@ -68,8 +63,12 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
+//    protected void onStart() {
+//        dateList = AppDatabase.getInstance(this).dateDao().getAll();
+//        adapter.addItem((ArrayList) dateList);
+//        super.onStart();
+//    }
 
     @Override
     public void onBackPressed(){
@@ -86,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
             finishAffinity();
         }
         
+    }
+    public void listRefresh(){
+        recyclerView.removeAllViewsInLayout();
+        recyclerView.setAdapter(adapter);
     }
 
     public void getData(Intent intent){

@@ -3,7 +3,6 @@ package com.example.projecthensel;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -11,6 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.projecthensel.Recycler.Data2;
+import com.example.projecthensel.Recycler.DetailAdapter;
 
 public class DetailRouteActivity extends AppCompatActivity {
 
