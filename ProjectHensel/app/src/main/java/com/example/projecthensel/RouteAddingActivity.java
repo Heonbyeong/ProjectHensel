@@ -48,10 +48,11 @@ public class RouteAddingActivity extends AppCompatActivity {
     TextView countText;
     EditText addressEdit, yearEdit, monthEdit, dateEdit, hourStartEdit, minStartEdit, hourEndEdit, minEndEdit, memoEdit;
     WebView daum_webView;
-    String year, month, date, dataString, memo,address, startTime, endTime;
+    String year, month, date, fullDate, memo,address, startTime, endTime;
     InputMethodManager imm;
     ConstraintLayout mainLayout;
     private Handler handler;
+    private Parcelable recyclerViewState = null;
     private AppDatabase db;
 
     int count = 0;
@@ -167,6 +168,8 @@ public class RouteAddingActivity extends AppCompatActivity {
         });
     }
 
+
+
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     public void init_webView(){
         daum_webView = findViewById(R.id.daum_webView);
@@ -197,7 +200,7 @@ public class RouteAddingActivity extends AppCompatActivity {
         intent.putExtra("year", year);
         intent.putExtra("month", month);
         intent.putExtra("date", date);
-        intent.putExtra("dataString", dataString);
+        intent.putExtra("fullDate", fullDate);
         intent.putExtra("address", address);
         intent.putExtra("startTime", startTime);
         intent.putExtra("endTime", endTime);
@@ -227,7 +230,7 @@ public class RouteAddingActivity extends AppCompatActivity {
         startTime = hourStartEdit.getText().toString() + ":" + minStartEdit.getText().toString();
         endTime = hourEndEdit.getText().toString() + ":" + minEndEdit.getText().toString();
         memo = memoEdit.getText().toString();
-        dataString = month + "월 " + date + "일";
+        fullDate = month + "월 " + date + "일";
         count += 1;
     }
 }

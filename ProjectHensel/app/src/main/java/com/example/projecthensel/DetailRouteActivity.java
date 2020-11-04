@@ -11,16 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.projecthensel.Recycler.Data2;
-import com.example.projecthensel.Recycler.DetailAdapter;
+import com.example.projecthensel.Recycler.DateDetail;
+import com.example.projecthensel.Recycler.DetailDateAdapter;
 
 public class DetailRouteActivity extends AppCompatActivity {
 
     Button returnButton;
     RecyclerView detailRecyclerView;
-    DetailAdapter adapter;
+    DetailDateAdapter adapter;
     TextView yearEdit, monthDate, countText2;
-    String year, dateString, address, memo, startTime, endTime, count;
+    String year, fullDate, address, memo, startTime, endTime, count;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,14 +31,14 @@ public class DetailRouteActivity extends AppCompatActivity {
         monthDate = (TextView)findViewById(R.id.monthDate);
         countText2 = (TextView)findViewById(R.id.countText2);
 
-        adapter = new DetailAdapter();
+        adapter = new DetailDateAdapter();
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Intent intent4 = getIntent();
 
         //메인액티비티에서 데이터 가져오기
         if(intent4.hasExtra("hasData")){
             year = intent4.getExtras().getString("yearToDetail") + "년";
-            dateString = intent4.getExtras().getString("dataStringToDetail");
+            fullDate = intent4.getExtras().getString("fullDateToDetail");
             address = intent4.getExtras().getString("addressToDetail");
             startTime = intent4.getExtras().getString("startTimeToDetail") + " AM";
             endTime = intent4.getExtras().getString("endTimeToDetail") + " PM";
@@ -46,11 +46,11 @@ public class DetailRouteActivity extends AppCompatActivity {
             count = intent4.getExtras().getString("countToDetail");
 
             yearEdit.setText(year);
-            monthDate.setText(dateString);
+            monthDate.setText(fullDate);
             countText2.setText(count);
 
             detailRecyclerView.setAdapter(adapter);
-            adapter.addItem(new Data2(address, startTime, endTime, memo));
+            adapter.addItem(new DateDetail(address, startTime, endTime, memo));
         }
 
         //메인으로 돌아가기

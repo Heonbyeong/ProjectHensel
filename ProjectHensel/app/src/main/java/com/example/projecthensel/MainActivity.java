@@ -1,6 +1,5 @@
 package com.example.projecthensel;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,21 +11,19 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.projecthensel.Recycler.Data;
-import com.example.projecthensel.Recycler.DateAdapter;
-import com.example.projecthensel.Room.AppDatabase;
+import com.example.projecthensel.Recycler.DateMain;
+import com.example.projecthensel.Recycler.DateMainAdapter;
 import com.example.projecthensel.Room.Date;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ImageButton ImageButton;
-    DateAdapter adapter = new DateAdapter();
+    DateMainAdapter adapter = new DateMainAdapter();
     Toast toast2;
-    String year, month, date, dataString; // Adding 페이지에서 받아오는 값을 저장
+    String year, month, date, fullDate; // Adding 페이지에서 받아오는 값을 저장
     String memo,address, startTime, endTime; // Detail 페이지로 넘길 값을 저장
     Boolean bool;
     private long backKeyPressedTime = 0; // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
@@ -41,17 +38,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-        recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
         final Intent intent = getIntent();
         Intent intent3 = new Intent(getApplicationContext(), DetailRouteActivity.class);
         if(recyclerViewState != null)
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
-
         if(intent.hasExtra("bool"))
        {
            //add Route 페이지에서 데이터 받아오기
            getData(intent);
-           adapter.addItem(new Data(dataString, count));
+           adapter.addItem(new DateMain(fullDate, count));
            //Main -> Detail 페이지로 데이터 전달
            insertData(intent3);
 
@@ -63,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             ImageButton.setOnClickListener(new View.OnClickListener(){     //add Route 페이지로 이동
             @Override
             public void onClick(View v) {
+                saveRecyclerViewState();
                 Intent intent2 = new Intent(MainActivity.this, RouteAddingActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent2);
@@ -75,6 +71,29 @@ public class MainActivity extends AppCompatActivity {
 //        adapter.addItem((ArrayList) dateList);
 //        super.onStart();
 //    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(recyclerViewState != null){
+            setSavedRecyclerViewState();
+        }
+    }
+
+//    private void openAnotherActivity(){
+//        saveRecyclerViewState();
+//        Intent intent = new Intent(this, DetailRouteActivity.class);
+//        startActivity(intent);
+//    }
+
+    private void saveRecyclerViewState() {
+        // LayoutManager를 불러와 Parcelable 변수에 리사이클러뷰 상태를 Bundle 형태로 저장
+        recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
+    }
+
+    private void setSavedRecyclerViewState(){
+        recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+    }
 
     @Override
     public void onBackPressed(){
@@ -92,10 +111,6 @@ public class MainActivity extends AppCompatActivity {
         }
         
     }
-    public void listRefresh(){
-        recyclerView.removeAllViewsInLayout();
-        recyclerView.setAdapter(adapter);
-    }
 
     public void getData(Intent intent){
         bool = intent.getExtras().getBoolean("bool");
@@ -107,13 +122,13 @@ public class MainActivity extends AppCompatActivity {
         startTime = intent.getExtras().getString("startTime");
         endTime = intent.getExtras().getString("endTime");
         memo = intent.getExtras().getString("memo");
-        dataString = intent.getExtras().getString("dataString");
+        fullDate = intent.getExtras().getString("fullDate");
     }
 
     public void insertData(Intent intent3){
         intent3.putExtra("hasData", "yes");
         intent3.putExtra("yearToDetail", year);
-        intent3.putExtra("dataStringToDetail", dataString);
+        intent3.putExtra("fullDateToDetail", fullDate);
         intent3.putExtra("countToDetail", count);
         intent3.putExtra("addressToDetail", address);
         intent3.putExtra("startTimeToDetail", startTime);
