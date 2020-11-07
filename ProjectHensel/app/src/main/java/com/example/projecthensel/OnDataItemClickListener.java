@@ -2,8 +2,8 @@ package com.example.projecthensel;
 
 import android.view.View;
 
-import com.example.projecthensel.Recycler.DateMainAdapter;
+import com.example.projecthensel.Recycler.MainDateAdapter;
 
 public interface OnDataItemClickListener {
-    public void onItemClick(DateMainAdapter.ViewHolder holder, View view, int position);
+    public void onItemClick(MainDateAdapter.ViewHolder holder, View view, int position);
 }

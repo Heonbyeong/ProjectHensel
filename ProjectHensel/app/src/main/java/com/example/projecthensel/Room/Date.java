@@ -12,85 +12,31 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
 @Entity(tableName = "dateTable")
-public class Date implements Parcelable{
+public class Date {
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "date_Id")
     private int id;
-    @ColumnInfo(name = "date_year")
     private String year;
-    @ColumnInfo(name = "date_month")
     private String month;
-    @ColumnInfo(name = "date_date")
-    private String date;
-    @ColumnInfo(name = "date_dataString")
-    private String dataString;
-    @ColumnInfo(name = "date_memo")
+    private String day;
+    private String fullDate;
     private String memo;
-    @ColumnInfo(name = "date_address")
     private String address;
-    @ColumnInfo(name = "date_startTime")
     private String startTime;
-    @ColumnInfo(name = "date_endTime")
     private String endTime;
+    private int count;
 
-    @Ignore Boolean isCheck = true;
-    public Date(String year, String month, String date, String dataString, String memo,
-                String address, String startTime, String endTime){
+    public Date(String year, String month, String day, String fullDate, String memo,
+                String address, String startTime, String endTime, int count){
         this.year = year;
         this.month = month;
-        this.date = date;
-        this.dataString = dataString;
+        this.day = day;
+        this.fullDate = fullDate;
         this.memo = memo;
         this.address = address;
         this.startTime = startTime;
         this.endTime = endTime;
-
+        this.count = count;
     }
-
-    protected Date(Parcel in) {
-        id = in.readInt();
-        year = in.readString();
-        month = in.readString();
-        date = in.readString();
-        dataString = in.readString();
-        memo = in.readString();
-        address = in.readString();
-        startTime = in.readString();
-        endTime = in.readString();
-        byte tmpIsCheck = in.readByte();
-        isCheck = tmpIsCheck == 0 ? null : tmpIsCheck == 1;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(year);
-        dest.writeString(month);
-        dest.writeString(date);
-        dest.writeString(dataString);
-        dest.writeString(memo);
-        dest.writeString(address);
-        dest.writeString(startTime);
-        dest.writeString(endTime);
-        dest.writeByte((byte) (isCheck == null ? 0 : isCheck ? 1 : 2));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Date> CREATOR = new Creator<Date>() {
-        @Override
-        public Date createFromParcel(Parcel in) {
-            return new Date(in);
-        }
-
-        @Override
-        public Date[] newArray(int size) {
-            return new Date[size];
-        }
-    };
 
     public int getId() {
         return id;
@@ -116,20 +62,20 @@ public class Date implements Parcelable{
         this.month = month;
     }
 
-    public String getDate() {
-        return date;
+    public String getDay() {
+        return day;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDay(String day) {
+        this.day = day;
     }
 
-    public String getDataString() {
-        return dataString;
+    public String getFullDate() {
+        return fullDate;
     }
 
-    public void setDataString(String dataString) {
-        this.dataString = dataString;
+    public void setFullDate(String fullDate) {
+        this.fullDate = fullDate;
     }
 
     public String getMemo() {
@@ -164,11 +110,7 @@ public class Date implements Parcelable{
         this.endTime = endTime;
     }
 
-    public Boolean getCheck() {
-        return isCheck;
-    }
+    public int getCount() {return count;}
 
-    public void setCheck(Boolean check) {
-        isCheck = check;
-    }
+    public void setCount(int count) {this.count = count;}
 }

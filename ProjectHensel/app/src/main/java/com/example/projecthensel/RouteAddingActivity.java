@@ -1,32 +1,20 @@
 package com.example.projecthensel;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
-import android.text.Layout;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -36,9 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import com.example.projecthensel.Room.AppDatabase;
 
@@ -48,7 +33,7 @@ public class RouteAddingActivity extends AppCompatActivity {
     TextView countText;
     EditText addressEdit, yearEdit, monthEdit, dateEdit, hourStartEdit, minStartEdit, hourEndEdit, minEndEdit, memoEdit;
     WebView daum_webView;
-    String year, month, date, fullDate, memo,address, startTime, endTime;
+    String year, month, day, fullDate, memo,address, startTime, endTime;
     InputMethodManager imm;
     ConstraintLayout mainLayout;
     private Handler handler;
@@ -97,7 +82,6 @@ public class RouteAddingActivity extends AppCompatActivity {
                         else {
                             Intent intent = new Intent(RouteAddingActivity.this, MainActivity.class);
                             getEdit();
-                            //db.dateDao().update(year, month, date, dataString, memo, address, startTime, endTime, id);
                             insertData(intent);
                             startActivity(intent);
                             initData();
@@ -199,7 +183,7 @@ public class RouteAddingActivity extends AppCompatActivity {
         intent.putExtra("bool", true);
         intent.putExtra("year", year);
         intent.putExtra("month", month);
-        intent.putExtra("date", date);
+        intent.putExtra("day", day);
         intent.putExtra("fullDate", fullDate);
         intent.putExtra("address", address);
         intent.putExtra("startTime", startTime);
@@ -225,12 +209,12 @@ public class RouteAddingActivity extends AppCompatActivity {
     public void getEdit(){
         year = yearEdit.getText().toString();
         month = monthEdit.getText().toString();
-        date = dateEdit.getText().toString();
+        day = dateEdit.getText().toString();
         address = addressEdit.getText().toString();
         startTime = hourStartEdit.getText().toString() + ":" + minStartEdit.getText().toString();
         endTime = hourEndEdit.getText().toString() + ":" + minEndEdit.getText().toString();
         memo = memoEdit.getText().toString();
-        fullDate = month + "월 " + date + "일";
+        fullDate = month + "월 " + day + "일";
         count += 1;
     }
 }
