@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private AppDatabase db;
 
     private long backKeyPressedTime = 0; // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
-    private List<Date> dateList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +40,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ImageButton = findViewById(R.id.editImageButton);
         recyclerView = findViewById(R.id.recyclerView);
+        db = AppDatabase.getDatabase(this);
+        adapter = new MainDateAdapter(db);
 
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(adapter);
-
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        
         final Intent intent = getIntent();
         Intent intent3 = new Intent(getApplicationContext(), DetailRouteActivity.class);
+
+
         if(intent.hasExtra("bool"))
        {
            //add Route 페이지에서 데이터 받아오기
@@ -61,26 +66,12 @@ public class MainActivity extends AppCompatActivity {
            memo = intent.getExtras().getString("memo");
            fullDate = intent.getExtras().getString("fullDate");
 
+
            //DB추가
            new Thread(() ->{
                Date date = new Date(year, month, day, fullDate, memo, address, startTime, endTime, count);
                db.dateDao().insert(date);
            }).start();
-
-           db = AppDatabase.getDatabase(this);
-           recyclerView.setHasFixedSize(true);
-           RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-           recyclerView.setLayoutManager(layoutManager);
-           adapter = new MainDateAdapter(db);
-           recyclerView.setAdapter(adapter);
-
-           //UI 갱신 (Observer 이용, DB 값이 변화가 생기면 실행)
-           db.dateDao().getAll().observe(this, new Observer<List<Date>>() {
-               @Override
-               public void onChanged(List<Date> data) {
-                   adapter.setItem(data);
-               }
-           });
 
            //Main -> Detail 페이지로 데이터 전달
            insertData(intent3);
@@ -88,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
            //intent3.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
            startActivity(intent3);
         }
+
+        new Thread(() -> {
+            List<Date> dateList = db.dateDao().getAll();
+            adapter.setItem(dateList);
+        }).start();
+
 
         //이미지 버튼 클릭시 Add 페이지로 이동
             ImageButton.setOnClickListener(new View.OnClickListener(){     //add Route 페이지로 이동
@@ -117,10 +114,6 @@ public class MainActivity extends AppCompatActivity {
             finishAffinity();
         }
         
-    }
-
-    public void getData(Intent intent){
-
     }
 
     public void insertData(Intent intent3){

@@ -23,7 +23,7 @@ public interface DateDao {
     void delete(Date date);
 
     @Query("SELECT * FROM dateTable")
-    LiveData<List<Date>> getAll(); //LiveData
+    List<Date> getAll(); //LiveData
 
     @Query("DELETE FROM dateTable")
     void deleteAll();
