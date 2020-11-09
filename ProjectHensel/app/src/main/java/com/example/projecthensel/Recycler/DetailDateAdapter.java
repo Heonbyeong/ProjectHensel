@@ -17,29 +17,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.projecthensel.MainActivity;
 import com.example.projecthensel.OnDataItemClickListener;
 import com.example.projecthensel.R;
+import com.example.projecthensel.Room.AppDatabase;
+import com.example.projecthensel.Room.Date;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailDateAdapter extends RecyclerView.Adapter<DetailDateAdapter.ViewHolder> {
 
-    ArrayList<DateDetail> items = new ArrayList<>();
+    private List<Date> items = new ArrayList<>();
     OnDataItemClickListener listener;
+    private AppDatabase db;
 
-    public void addItem(DateDetail data2){
-        items.add(data2);
-    }
+    public DetailDateAdapter(AppDatabase db) {this.db = db;}
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView addressText, startTime, endTime, memoText2;
+        TextView addressText, startTime, endTime, memoText;
         ImageButton delButton;
         Context context;
+        private int index;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
-            addressText = itemView.findViewById(R.id.textView4);
+            addressText = itemView.findViewById(R.id.address_text);
             startTime = itemView.findViewById(R.id.startTime);
             endTime = itemView.findViewById(R.id.endTime);
-            memoText2 = itemView.findViewById(R.id.memoText2);
+            memoText = itemView.findViewById(R.id.memo_text);
             delButton = itemView.findViewById(R.id.delButton);
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
@@ -74,18 +77,23 @@ public class DetailDateAdapter extends RecyclerView.Adapter<DetailDateAdapter.Vi
             });
         }
 
-        public void setItem(DateDetail item){
-            addressText.setText(item.getAddress());
-            startTime.setText(item.getStartTime());
-            endTime.setText(item.getEndTime());
-            memoText2.setText(item.getMemo());
+        public void onBind(Date date, int position){
+            index = position;
+            addressText.setText(date.getAddress());
+            startTime.setText(date.getStartTime());
+            endTime.setText(date.getEndTime());
+            memoText.setText(date.getMemo());
         }
 
         public void removeItem(int position){
             items.remove(position);
-
             notifyItemRemoved(position);
         }
+    }
+
+    public void setItem(List<Date> item){
+        items = item;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -101,8 +109,7 @@ public class DetailDateAdapter extends RecyclerView.Adapter<DetailDateAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull DetailDateAdapter.ViewHolder holder, int position) {
-        DateDetail item = items.get(position);
-        holder.setItem(item);
+        holder.onBind(items.get(position), position);
     }
 
     @Override
@@ -110,5 +117,5 @@ public class DetailDateAdapter extends RecyclerView.Adapter<DetailDateAdapter.Vi
         return items.size();
     }
 
-
+    public List<Date> getItems() {return items;}
 }

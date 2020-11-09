@@ -23,7 +23,6 @@ import java.util.List;
     private List<Date> items = new ArrayList<>();
     OnDataItemClickListener listener;
     private AppDatabase db;
-    public void addItem(Date item) {items.add(item);}
 
     public MainDateAdapter(AppDatabase db){
         this.db = db;

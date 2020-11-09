@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view12" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/address_text"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -60,11 +60,11 @@
         android:background="@drawable/cross"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.543"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/address_text"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/memoText2"
+        android:id="@+id/memo_text"
         android:layout_width="280dp"
         android:layout_height="100dp"
         android:layout_marginLeft="7dp"
@@ -79,7 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/linearLayout4"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/address_text" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"
