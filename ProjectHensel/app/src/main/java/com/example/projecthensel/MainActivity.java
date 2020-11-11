@@ -1,7 +1,9 @@
 package com.example.projecthensel;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,10 +49,11 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        
+
         final Intent intent = getIntent();
         Intent intent3 = new Intent(getApplicationContext(), DetailRouteActivity.class);
 
+        initSwipe();
 
         if(intent.hasExtra("bool"))
        {
@@ -61,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
            day = intent.getExtras().getString("day");
            count = intent.getExtras().getInt("count");
            address = intent.getExtras().getString("address");
-           startTime = intent.getExtras().getString("startTime");
-           endTime = intent.getExtras().getString("endTime");
+           startTime = intent.getExtras().getString("startTime") + " AM";
+           endTime = intent.getExtras().getString("endTime") + " PM";
            memo = intent.getExtras().getString("memo");
            fullDate = intent.getExtras().getString("fullDate");
 
-
+           intent3.putExtra("compareDate", fullDate);
            //DB추가
            new Thread(() ->{
                Date date = new Date(year, month, day, fullDate, memo, address, startTime, endTime, count);
@@ -75,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
            //Main -> Detail 페이지로 데이터 전달
            insertData(intent3);
-
-           //intent3.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
            startActivity(intent3);
         }
 
@@ -95,8 +96,32 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent2);
             }
         });
+    }
 
+    //왼쪽으로 아이템 스와이프시 삭제
+    private void initSwipe(){
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback =  new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
 
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+                if(direction == ItemTouchHelper.LEFT){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            db.dateDao().delete(adapter.getItems().get(position));
+                        }
+                    }).start();
+                }
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -113,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         if(System.currentTimeMillis() <= backKeyPressedTime + 2500){
             finishAffinity();
         }
-        
+
     }
 
     public void insertData(Intent intent3){

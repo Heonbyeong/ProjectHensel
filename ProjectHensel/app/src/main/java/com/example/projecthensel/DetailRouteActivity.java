@@ -21,6 +21,7 @@ import com.example.projecthensel.Room.AppDatabase;
 import com.example.projecthensel.Room.Date;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DetailRouteActivity extends AppCompatActivity {
 
@@ -28,7 +29,6 @@ public class DetailRouteActivity extends AppCompatActivity {
     RecyclerView detailRecyclerView;
     DetailDateAdapter adapter;
     TextView yearEdit, monthDate, countText2;
-    String year, fullDate, address, memo, startTime, endTime, count;
     Date date;
     private AppDatabase db;
 
@@ -50,32 +50,22 @@ public class DetailRouteActivity extends AppCompatActivity {
         db = AppDatabase.getDatabase(this);
         final AlertDialog.Builder builder = new AlertDialog.Builder(DetailRouteActivity.this);
         Intent intent4 = getIntent();
-        //메인액티비티에서 데이터 가져오기
-        if(intent4.hasExtra("hasData")){
-//            year = intent4.getExtras().getString("yearToDetail") + "년";
-//            fullDate = intent4.getExtras().getString("fullDateToDetail");
-//            address = intent4.getExtras().getString("addressToDetail");
-//            startTime = intent4.getExtras().getString("startTimeToDetail") + " AM";
-//            endTime = intent4.getExtras().getString("endTimeToDetail") + " PM";
-//            memo = intent4.getExtras().getString("memoToDetail");
-//            count = intent4.getExtras().getString("countToDetail");
 
-            yearEdit.setText(date.getYear());
-            monthDate.setText(date.getFullDate());
-            countText2.setText(date.getCount());
+        //메인액티비티에서 데이터 가져오기)
 
-        }
-
+//            yearEdit.setText();
+//            monthDate.setText(date.getMonth());
+//            countText2.setText(date.getCount());
         new Thread(() -> {
             List<Date> dateList = db.dateDao().getAll();
-            adapter.setItem(dateList);
+//            yearEdit.setText();
+                adapter.setItem(dateList);
         }).start();
         //메인으로 돌아가기
         returnButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(DetailRouteActivity.this, MainActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent2);
             }
         });
@@ -88,9 +78,12 @@ public class DetailRouteActivity extends AppCompatActivity {
                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                        db.dateDao().delete(adapter.getItems().get(position));
-                        startActivity(intent);
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                            }
+                        }).start();
                     }
                 });
                 builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {

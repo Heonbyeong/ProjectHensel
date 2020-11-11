@@ -27,5 +27,14 @@ public interface DateDao {
 
     @Query("DELETE FROM dateTable")
     void deleteAll();
+
+//    @Query("SELECT * FROM dateTable WHERE year")
+//    String getYear();
+//
+//    @Query("SELECT * FROM dateTable WHERE month")
+//    List<Date> getMonth();
+//
+//    @Query("SELECT * FROM dateTable WHERE count")
+//    List<Date> getCount();
 }
 

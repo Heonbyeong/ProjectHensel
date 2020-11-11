@@ -28,6 +28,8 @@ import java.util.List;
         this.db = db;
     }
 
+    public List<Date> getItems() {return items;}
+
     @NonNull
     @Override
     public MainDateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
